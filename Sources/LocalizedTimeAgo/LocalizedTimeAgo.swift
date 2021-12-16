@@ -50,7 +50,13 @@ fileprivate extension String {
         return self
     }
 
-    func localized() -> String {
+    func localized(language: String? = nil) -> String {
+        if let language = language,
+           let pathForLanguage = Bundle.moduleBundle.path(forResource: language, ofType: "lproj"),
+           let languageBundle = Bundle(path: pathForLanguage) {
+            return NSLocalizedString(self, tableName: Constants.resource, bundle: languageBundle, value: "", comment: "")
+        }
+        
         return NSLocalizedString(self, tableName: Constants.resource, bundle: Bundle.moduleBundle, value: "", comment: "")
     }
 
@@ -66,30 +72,30 @@ public extension Date {
         return calendar.dateComponents(unitFlags, from: self, to: now)
     }
 
-    func timeAgo(numericDates: Bool = false, numericTimes: Bool = false) -> String {
+    func timeAgo(numericDates: Bool = false, numericTimes: Bool = false, language: String? = nil) -> String {
         if let year = components.year, year > 0 {
-            if year >= 2 { return String(format: "%d years ago".adjustedKey(forValue: year).localized(), year) }
-            return numericDates ? "1 year ago".localized() : "Last year".localized()
+            if year >= 2 { return String(format: "%d years ago".adjustedKey(forValue: year).localized(language: language), year) }
+            return numericDates ? "1 year ago".localized() : "Last year".localized(language: language)
         } else if let month = components.month, month > 0 {
-            if month >= 2 { return String(format: "%d months ago".adjustedKey(forValue: month).localized(), month) }
-            return numericDates ? "1 month ago".localized() : "Last month".localized()
+            if month >= 2 { return String(format: "%d months ago".adjustedKey(forValue: month).localized(language: language), month) }
+            return numericDates ? "1 month ago".localized() : "Last month".localized(language: language)
         } else if let week = components.weekOfYear, week > 0 {
-            if week >= 2 { return String(format: "%d weeks ago".adjustedKey(forValue: week).localized(), week) }
-            return numericDates ? "1 week ago".localized() : "Last week".localized()
+            if week >= 2 { return String(format: "%d weeks ago".adjustedKey(forValue: week).localized(language: language), week) }
+            return numericDates ? "1 week ago".localized() : "Last week".localized(language: language)
         } else if let day = components.day, day > 0 {
             let isYesterday = calendar.isDateInYesterday(self)
-            if day >= 2 && !isYesterday { return String(format: "%d days ago".adjustedKey(forValue: day).localized(), day) }
-            return numericDates ? "1 day ago".localized() : "Yesterday".localized()
+            if day >= 2 && !isYesterday { return String(format: "%d days ago".adjustedKey(forValue: day).localized(language: language), day) }
+            return numericDates ? "1 day ago".localized() : "Yesterday".localized(language: language)
         } else if let hour = components.hour, hour > 0 {
-            if hour >= 2 { return String(format: "%d hours ago".adjustedKey(forValue: hour).localized(), hour) }
-            return numericDates ? "1 hour ago".localized() : "An hour ago".localized()
+            if hour >= 2 { return String(format: "%d hours ago".adjustedKey(forValue: hour).localized(language: language), hour) }
+            return numericDates ? "1 hour ago".localized() : "An hour ago".localized(language: language)
         } else if let minute = components.minute, minute > 0 {
-            if minute >= 2 { return String(format: "%d minutes ago".adjustedKey(forValue: minute).localized(), minute) }
-            return numericDates ? "1 minute ago".localized() : "A minute ago".localized()
+            if minute >= 2 { return String(format: "%d minutes ago".adjustedKey(forValue: minute).localized(language: language), minute) }
+            return numericDates ? "1 minute ago".localized() : "A minute ago".localized(language: language)
         } else if let second = components.second, second >= 3 {
-            return String(format: "%d seconds ago".adjustedKey(forValue: second).localized(), second)
+            return String(format: "%d seconds ago".adjustedKey(forValue: second).localized(language: language), second)
         }
-        return numericTimes ? "1 second ago".localized() : "Just now".localized()
+        return numericTimes ? "1 second ago".localized() : "Just now".localized(language: language)
     }
 
     func shortTimeAgo() -> String {
